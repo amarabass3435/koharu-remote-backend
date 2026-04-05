@@ -27,6 +27,7 @@ imageproc = { workspace = true }
 open = { workspace = true }
 rayon = { workspace = true }
 rfd = { workspace = true }
+reqwest = { workspace = true, features = ["multipart"] }
 reqwest-middleware = { workspace = true }
 secrecy = { workspace = true }
 serde = { workspace = true }

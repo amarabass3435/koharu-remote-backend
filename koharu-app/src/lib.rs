@@ -5,6 +5,7 @@ pub mod google_fonts;
 pub mod io;
 pub mod llm;
 pub mod pipeline;
+pub mod remote;
 pub mod renderer;
 pub mod storage;
 pub mod utils;

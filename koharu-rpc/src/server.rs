@@ -28,20 +28,7 @@ pub async fn serve_with_listener(
 ) -> Result<()> {
     let tracker = Tracker::new(&shared);
 
-    // ── Decide: local engines vs. Colab proxy ───────────────────────
-    let remote_config = koharu_app::config::load()
-        .map(|c| c.remote)
-        .unwrap_or_default();
-
-    let api_router = if remote_config.enabled && !remote_config.url.is_empty() {
-        tracing::info!(
-            url = %remote_config.url,
-            "Remote mode ON — proxying /api/v1 to Colab backend"
-        );
-        crate::proxy::router(remote_config.url)
-    } else {
-        api::router(shared.clone(), tracker)
-    };
+    let api_router = api::router(shared.clone(), tracker);
 
     let mcp = StreamableHttpService::new(
         {

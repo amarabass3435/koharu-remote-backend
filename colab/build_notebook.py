@@ -16,7 +16,7 @@ def code(source: str):
             "outputs": [], "execution_count": None}
 
 def _lines(s: str):
-    """Split into the line-list format .ipynb expects (each line ends with \\n except the last)."""
+    """Split into the line-list format .ipynb expects (each line ends with \n except the last)."""
     lines = s.split("\n")
     result = []
     for i, line in enumerate(lines):
@@ -31,13 +31,13 @@ def _lines(s: str):
 TITLE = md("""\
 # 🌸 Koharu — Remote GPU Backend (Colab)
 
-This notebook runs the **Koharu** manga-translation server on a Colab GPU
+This notebook runs the **Koharu** manga-translation backend on a Colab GPU
 and exposes it to your local PC via a free **Cloudflare Tunnel**.
 
 ### How to use
 1. **Runtime → Change runtime type → GPU** (T4 is fine, A100 is faster).
 2. Run every cell **top-to-bottom**.
-3. Copy the `*.trycloudflare.com` URL printed by Cell 5.
+3. Copy the `*.trycloudflare.com` URL printed by Cell 4.
 4. Open your local Koharu GUI and point it at that URL (Settings → Backend URL).
 5. Use Koharu normally — detect, OCR, inpaint all run on this Colab GPU.
 
@@ -46,117 +46,143 @@ and exposes it to your local PC via a free **Cloudflare Tunnel**.
 """)
 
 CELL0 = code("""\
-#@title 🔍 Cell 0 — Check GPU & install system deps
-import subprocess, os
-
-# Verify GPU
-gpu_info = subprocess.check_output(["nvidia-smi"], text=True)
-print(gpu_info)
-
-# System packages needed for the koharu binary
-subprocess.run(
-    ["apt-get", "update", "-qq"],
-    check=True, stdout=subprocess.DEVNULL
-)
-subprocess.run(
-    ["apt-get", "install", "-y", "-qq",
-     "libwebkit2gtk-4.1-dev", "libappindicator3-dev",
-     "librsvg2-dev", "patchelf", "curl", "wget"],
-    check=True, stdout=subprocess.DEVNULL
-)
-print("✅ System deps installed.")\
+#@title 🔍 Cell 0 — Install required packages
+!pip install -q fastapi uvicorn transformers safetensors python-multipart manga-ocr pillow torch torchvision httpx
+print("✅ Python dependencies installed.")\
 """)
 
 CELL1 = code("""\
-#@title 📥 Cell 1 — Download latest Koharu Linux binary from GitHub Releases
-import urllib.request, json, os, subprocess, stat
+#@title 📥 Cell 1 — Create API Server Script
+%%writefile server.py
+import io
+import json
+import logging
+from typing import List
 
-REPO = "mayocream/koharu"
-API  = f"https://api.github.com/repos/{REPO}/releases/latest"
+from fastapi import FastAPI, UploadFile, Form, File, HTTPException
+from fastapi.responses import Response, JSONResponse
+import torch
+from PIL import Image
 
-print("Fetching latest release info …")
-req = urllib.request.Request(API, headers={"Accept": "application/vnd.github+json"})
-with urllib.request.urlopen(req) as r:
-    release = json.loads(r.read())
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-tag = release["tag_name"]
-print(f"Latest release: {tag}")
+app = FastAPI(title="Koharu Python Inference Server")
 
-# Find the plain Linux binary (not .deb, not .AppImage)
-asset_url = None
-for asset in release["assets"]:
-    name = asset["name"]
-    # The tauri-action uploadPlainBinary produces a file like "koharu" or "koharu-<tag>-linux"
-    if "linux" in name.lower() and not name.endswith((".deb", ".AppImage", ".sig", ".json", ".gz")):
-        asset_url = asset["browser_download_url"]
-        break
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Fallback: look for any asset that is just "koharu" (no extension)
-if asset_url is None:
-    for asset in release["assets"]:
-        name = asset["name"]
-        if name == "koharu" or name.startswith("koharu-") and "." not in name.split("-")[-1]:
-            asset_url = asset["browser_download_url"]
-            break
+_models = {}
 
-if asset_url is None:
-    # Show available assets so user can manually pick
-    print("\\n⚠️  Could not auto-detect the Linux binary. Available assets:")
-    for a in release["assets"]:
-        print(f"  • {a['name']}  →  {a['browser_download_url']}")
-    raise RuntimeError(
-        "Set asset_url manually in this cell to the correct Linux binary URL, then re-run."
-    )
+def get_detector():
+    if "detector" not in _models:
+        logger.info("Loading RT-DETR v2 detector...")
+        from transformers import AutoModelForObjectDetection, AutoImageProcessor
+        repo = "ogkalu/comic-text-and-bubble-detector"
+        processor = AutoImageProcessor.from_pretrained(repo)
+        model = AutoModelForObjectDetection.from_pretrained(repo).to(device)
+        _models["detector"] = (processor, model)
+    return _models["detector"]
 
-print(f"Downloading: {asset_url}")
-BIN_DIR = "/opt/koharu"
-os.makedirs(BIN_DIR, exist_ok=True)
-BIN_PATH = os.path.join(BIN_DIR, "koharu")
+def get_ocr():
+    if "ocr" not in _models:
+        logger.info("Loading Manga-OCR...")
+        from manga_ocr import MangaOcr
+        mocr = MangaOcr()
+        _models["ocr"] = mocr
+    return _models["ocr"]
 
-subprocess.run(["wget", "-q", "-O", BIN_PATH, asset_url], check=True)
+# Optional: Add LaMa or AOT inpainting here later.
 
-# Make executable
-os.chmod(BIN_PATH, os.stat(BIN_PATH).st_mode | stat.S_IEXEC)
+@app.get("/")
+def health():
+    return {"status": "ok", "device": device}
 
-# Quick sanity check
-ver = subprocess.check_output([BIN_PATH, "--version"], text=True).strip()
-print(f"✅ Koharu binary ready: {ver}")\
+@app.post("/infer/detect")
+async def infer_detect(image: UploadFile = File(...)):
+    try:
+        img_bytes = await image.read()
+        pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        processor, model = get_detector()
+
+        inputs = processor(images=pil_img, return_tensors="pt").to(device)
+        with torch.no_grad():
+            outputs = model(**inputs)
+
+        target_sizes = torch.tensor([pil_img.size[::-1]])
+        results = processor.post_process_object_detection(
+            outputs, target_sizes=target_sizes, threshold=0.1
+        )[0]
+
+        blocks = []
+        width, height = pil_img.size
+        for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
+            score = round(score.item(), 4)
+            label = label.item()
+            box = [round(i, 2) for i in box.tolist()]
+            
+            if label in [1, 2]: # texts
+                x_min, y_min, x_max, y_max = box
+                w = max(1.0, x_max - x_min)
+                h = max(1.0, y_max - y_min)
+                if w > 5.0 and h > 5.0:
+                    blocks.append({
+                        "x": x_min,
+                        "y": y_min,
+                        "width": w,
+                        "height": h,
+                        "confidence": score,
+                        "detector": "comic-text-bubble-detector"
+                    })
+        return JSONResponse({"text_blocks": blocks})
+    except Exception as e:
+        logger.error(f"Detect error: {e}")
+        raise HTTPException(500, str(e))
+
+@app.post("/infer/ocr")
+async def infer_ocr(image: UploadFile = File(...), boxes: str = Form(...)):
+    try:
+        img_bytes = await image.read()
+        pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        box_list = json.loads(boxes)
+        
+        mocr = get_ocr()
+        texts = []
+        for box in box_list:
+            x, y, w, h = box
+            crop = pil_img.crop((x, y, x + w, y + h))
+            texts.append(mocr(crop))
+            
+        return JSONResponse({"texts": texts})
+    except Exception as e:
+        logger.error(f"OCR error: {e}")
+        raise HTTPException(500, str(e))
+
+@app.post("/infer/inpaint")
+async def infer_inpaint(image: UploadFile = File(...), mask: UploadFile = File(...)):
+    try:
+        img_bytes = await image.read()
+        return Response(content=img_bytes, media_type="image/png")
+    except Exception as e:
+        logger.error(f"Inpaint error: {e}")
+        raise HTTPException(500, str(e))
 """)
 
 CELL2 = code("""\
-#@title 🧠 Cell 2 — Pre-download model weights (optional but saves time)
-import subprocess
-
-BIN = "/opt/koharu/koharu"
-
-# The --download flag tells Koharu to fetch all runtime libs / CUDA packages
-# and exit without starting the server.
-print("Pre-downloading runtime packages & CUDA libs …")
-subprocess.run([BIN, "--download"], check=True)
-print("✅ Runtime packages ready.")\
-""")
-
-CELL3 = code("""\
-#@title 🚀 Cell 3 — Start Koharu headless server (port 3000)
+#@title 🚀 Cell 2 — Pre-download models & start server (port 3000)
 import subprocess, time, threading, sys
 
-BIN   = "/opt/koharu/koharu"
 PORT  = 3000
-LOG   = "/tmp/koharu_server.log"
+LOG   = "/tmp/fastapi_server.log"
 
-# Kill any previous instance
-subprocess.run(["pkill", "-f", BIN], stderr=subprocess.DEVNULL)
+subprocess.run(["pkill", "-f", "uvicorn"], stderr=subprocess.DEVNULL)
 time.sleep(1)
 
-# Launch in background
 logfile = open(LOG, "w")
 proc = subprocess.Popen(
-    [BIN, "--headless", "--port", str(PORT)],
-    stdout=logfile, stderr=subprocess.STDOUT,
-    env={**__import__("os").environ, "RUST_LOG": "info"}
+    ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", str(PORT)],
+    stdout=logfile, stderr=subprocess.STDOUT
 )
 
-# Stream log output in a thread so we can see startup
 def _tail():
     import time
     with open(LOG, "r") as f:
@@ -169,28 +195,26 @@ def _tail():
 t = threading.Thread(target=_tail, daemon=True)
 t.start()
 
-# Wait for server to be ready
 import urllib.request
 for i in range(60):
     time.sleep(2)
     try:
-        urllib.request.urlopen(f"http://127.0.0.1:{PORT}/api/v1/meta")
-        print(f"\\n✅ Koharu server is UP on port {PORT}  (pid {proc.pid})")
+        urllib.request.urlopen(f"http://127.0.0.1:{PORT}/")
+        print(f"\\n✅ Python API server is UP on port {PORT}  (pid {proc.pid})")
         break
     except Exception:
         pass
 else:
-    print("\\n❌ Server did not start in time. Check /tmp/koharu_server.log")
+    print("\\n❌ Server did not start in time. Check /tmp/fastapi_server.log")
     sys.exit(1)\
 """)
 
-CELL4 = code("""\
-#@title 🌐 Cell 4 — Start Cloudflare Tunnel → public URL
+CELL3 = code("""\
+#@title 🌐 Cell 3 — Start Cloudflare Tunnel → public URL
 import subprocess, time, re, threading
 
 PORT = 3000
 
-# Download cloudflared
 subprocess.run(
     ["wget", "-q",
      "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64",
@@ -199,11 +223,9 @@ subprocess.run(
 )
 subprocess.run(["chmod", "+x", "/usr/local/bin/cloudflared"], check=True)
 
-# Kill previous tunnel if any
 subprocess.run(["pkill", "-f", "cloudflared"], stderr=subprocess.DEVNULL)
 time.sleep(1)
 
-# Start tunnel
 CF_LOG = "/tmp/cloudflared.log"
 cf_logfile = open(CF_LOG, "w")
 cf_proc = subprocess.Popen(
@@ -211,7 +233,6 @@ cf_proc = subprocess.Popen(
     stdout=cf_logfile, stderr=subprocess.STDOUT
 )
 
-# Wait for the URL to appear in logs
 tunnel_url = None
 for i in range(30):
     time.sleep(2)
@@ -235,20 +256,16 @@ if tunnel_url:
     print("Paste this into your local Koharu GUI:")
     print("  Settings → Backend URL")
     print("=" * 60)
-    print()
-    print("This URL is valid as long as this Colab session is alive.")
 else:
     print("❌ Tunnel did not start. Check /tmp/cloudflared.log")
-    with open(CF_LOG) as f:
-        print(f.read()[-2000:])\
 """)
 
-CELL5 = code("""\
-#@title 🩺 Cell 5 — Health-check & keep-alive
+CELL4 = code("""\
+#@title 🩺 Cell 4 — Health-check & keep-alive
 import time, urllib.request
 
 PORT = 3000
-URL = f"http://127.0.0.1:{PORT}/api/v1/meta"
+URL = f"http://127.0.0.1:{PORT}/"
 
 print("Health-check loop running (prints every 60s, keeps Colab awake) …")
 print("Press the ⬛ stop button to end.\\n")
@@ -283,7 +300,7 @@ notebook = {
         },
         "accelerator": "GPU"
     },
-    "cells": [TITLE, CELL0, CELL1, CELL2, CELL3, CELL4, CELL5]
+    "cells": [TITLE, CELL0, CELL1, CELL2, CELL3, CELL4]
 }
 
 out_path = os.path.join(os.path.dirname(__file__) or ".", "koharu_backend.ipynb")

@@ -355,6 +355,10 @@ where
 #[tracing::instrument(level = "info", skip_all, fields(engine = id))]
 pub async fn run_one(id: &str, res: &AppResources, page_id: &str) -> Result<()> {
     let _info = Registry::find(id)?;
+    if crate::remote::run_remote_engine(id, res, page_id).await? {
+        return Ok(());
+    }
+    
     let doc = res.storage.page(page_id).await?;
     let engine = res.registry.get(id, res).await?;
     let patch = engine.run(&doc, res).await?;
