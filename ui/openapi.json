@@ -1,0 +1,3008 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "paths": {
+    "/blobs/{hash}": {
+      "get": {
+        "tags": ["blobs"],
+        "operationId": "getBlob",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "format": "int32",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "getConfig",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/DataConfig"
+                        }
+                      ],
+                      "default": {
+                        "path": "C:\\Users\\Mayo\\AppData\\Local\\Koharu"
+                      }
+                    },
+                    "http": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/HttpConfig"
+                        }
+                      ],
+                      "default": {
+                        "connect_timeout": 20,
+                        "max_retries": 3,
+                        "read_timeout": 300
+                      }
+                    },
+                    "pipeline": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/PipelineConfig"
+                        }
+                      ],
+                      "default": {
+                        "bubble_detector": "comic-text-bubble-detector",
+                        "detector": "comic-text-bubble-detector",
+                        "font_detector": "yuzumarker-font-detection",
+                        "inpainter": "aot-inpainting",
+                        "ocr": "paddle-ocr-vl-1.5",
+                        "renderer": "koharu-renderer",
+                        "segmenter": "comic-text-detector-seg",
+                        "translator": "llm"
+                      }
+                    },
+                    "providers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProviderConfig"
+                      },
+                      "default": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["system"],
+        "operationId": "updateConfig",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/DataConfig"
+                      }
+                    ],
+                    "default": {
+                      "path": "C:\\Users\\Mayo\\AppData\\Local\\Koharu"
+                    }
+                  },
+                  "http": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/HttpConfig"
+                      }
+                    ],
+                    "default": {
+                      "connect_timeout": 20,
+                      "max_retries": 3,
+                      "read_timeout": 300
+                    }
+                  },
+                  "pipeline": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/PipelineConfig"
+                      }
+                    ],
+                    "default": {
+                      "bubble_detector": "comic-text-bubble-detector",
+                      "detector": "comic-text-bubble-detector",
+                      "font_detector": "yuzumarker-font-detection",
+                      "inpainter": "aot-inpainting",
+                      "ocr": "paddle-ocr-vl-1.5",
+                      "renderer": "koharu-renderer",
+                      "segmenter": "comic-text-detector-seg",
+                      "translator": "llm"
+                    }
+                  },
+                  "providers": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ProviderConfig"
+                    },
+                    "default": []
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/DataConfig"
+                        }
+                      ],
+                      "default": {
+                        "path": "C:\\Users\\Mayo\\AppData\\Local\\Koharu"
+                      }
+                    },
+                    "http": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/HttpConfig"
+                        }
+                      ],
+                      "default": {
+                        "connect_timeout": 20,
+                        "max_retries": 3,
+                        "read_timeout": 300
+                      }
+                    },
+                    "pipeline": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/PipelineConfig"
+                        }
+                      ],
+                      "default": {
+                        "bubble_detector": "comic-text-bubble-detector",
+                        "detector": "comic-text-bubble-detector",
+                        "font_detector": "yuzumarker-font-detection",
+                        "inpainter": "aot-inpainting",
+                        "ocr": "paddle-ocr-vl-1.5",
+                        "renderer": "koharu-renderer",
+                        "segmenter": "comic-text-detector-seg",
+                        "translator": "llm"
+                      }
+                    },
+                    "providers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProviderConfig"
+                      },
+                      "default": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents": {
+      "get": {
+        "tags": ["documents"],
+        "operationId": "listDocuments",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSummary"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["documents"],
+        "operationId": "importDocuments",
+        "parameters": [
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/components/schemas/ImportMode"
+                }
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["files"],
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}": {
+      "get": {
+        "tags": ["documents"],
+        "operationId": "getDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/brush-layer": {
+      "put": {
+        "tags": ["regions"],
+        "operationId": "updateBrushLayer",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrushRegionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/detect": {
+      "post": {
+        "tags": ["processing"],
+        "operationId": "detectDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/export/{format}": {
+      "get": {
+        "tags": ["exports"],
+        "operationId": "exportDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "layer",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/components/schemas/ExportLayer"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/inpaint": {
+      "post": {
+        "tags": ["processing"],
+        "operationId": "inpaintDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/inpaint-region": {
+      "post": {
+        "tags": ["regions"],
+        "operationId": "inpaintRegion",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InpaintRegionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/mask": {
+      "put": {
+        "tags": ["regions"],
+        "operationId": "updateMask",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaskRegionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/recognize": {
+      "post": {
+        "tags": ["processing"],
+        "operationId": "recognizeDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/render": {
+      "post": {
+        "tags": ["processing"],
+        "operationId": "renderDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/style": {
+      "patch": {
+        "tags": ["documents"],
+        "operationId": "updateDocumentStyle",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "description": "Document ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDocumentStyleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDocumentStyleRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/text-blocks": {
+      "put": {
+        "tags": ["text-blocks"],
+        "operationId": "putTextBlocks",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TextBlockInput"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["text-blocks"],
+        "operationId": "createTextBlock",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTextBlock"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TextBlockDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/text-blocks/{text_block_id}": {
+      "delete": {
+        "tags": ["text-blocks"],
+        "operationId": "deleteTextBlock",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "text_block_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["text-blocks"],
+        "operationId": "patchTextBlock",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "text_block_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextBlockPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TextBlockDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/thumbnail": {
+      "get": {
+        "tags": ["documents"],
+        "operationId": "getDocumentThumbnail",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": ["integer", "null"],
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "image/webp": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{document_id}/translate": {
+      "post": {
+        "tags": ["processing"],
+        "operationId": "translateDocument",
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranslateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/downloads": {
+      "get": {
+        "tags": ["downloads"],
+        "operationId": "listDownloads",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DownloadState"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/engines": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "getEngineCatalog",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "detectors",
+                    "bubbleDetectors",
+                    "fontDetectors",
+                    "segmenters",
+                    "ocr",
+                    "translators",
+                    "inpainters",
+                    "renderers"
+                  ],
+                  "properties": {
+                    "bubbleDetectors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "detectors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "fontDetectors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "inpainters": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "ocr": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "renderers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "segmenters": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    },
+                    "translators": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EngineCatalogEntry"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exports": {
+      "post": {
+        "tags": ["exports"],
+        "operationId": "batchExport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportResult"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fonts": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "listFonts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FontFaceInfo"
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fonts/google/catalog": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "getGoogleFontsCatalog",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleFontCatalogResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fonts/google/{family}/fetch": {
+      "post": {
+        "tags": ["system"],
+        "operationId": "fetchGoogleFont",
+        "parameters": [
+          {
+            "name": "family",
+            "in": "path",
+            "description": "Font family name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FontFaceInfo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fonts/google/{family}/file": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "getGoogleFontFile",
+        "parameters": [
+          {
+            "name": "family",
+            "in": "path",
+            "description": "Font family name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Font file bytes",
+            "content": {
+              "font/ttf": {}
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": ["jobs"],
+        "operationId": "listJobs",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobState"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/pipeline": {
+      "post": {
+        "tags": ["jobs"],
+        "operationId": "startPipeline",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipelineJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobState"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}": {
+      "get": {
+        "tags": ["jobs"],
+        "operationId": "getJob",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobState"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["jobs"],
+        "operationId": "cancelJob",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/llm": {
+      "get": {
+        "tags": ["llm"],
+        "operationId": "getLlm",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmState"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["llm"],
+        "operationId": "loadLlm",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LlmLoadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["llm"],
+        "operationId": "unloadLlm",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmState"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/llm/catalog": {
+      "get": {
+        "tags": ["llm"],
+        "operationId": "getLlmCatalog",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmCatalog"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meta": {
+      "get": {
+        "tags": ["system"],
+        "operationId": "getMeta",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaInfo"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "required": ["status", "message"],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "BrushRegionRequest": {
+        "type": "object",
+        "required": ["data", "region"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        }
+      },
+      "CreateTextBlock": {
+        "type": "object",
+        "required": ["x", "y", "width", "height"],
+        "properties": {
+          "height": {
+            "type": "number",
+            "format": "float"
+          },
+          "width": {
+            "type": "number",
+            "format": "float"
+          },
+          "x": {
+            "type": "number",
+            "format": "float"
+          },
+          "y": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "DataConfig": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "DocumentDetail": {
+        "type": "object",
+        "required": ["id", "name", "width", "height", "textBlocks", "image"],
+        "properties": {
+          "brushLayer": {
+            "type": ["string", "null"],
+            "description": "Blob hash for the brush layer."
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "description": "Blob hash for the source image layer."
+          },
+          "inpainted": {
+            "type": ["string", "null"],
+            "description": "Blob hash for the inpainted layer."
+          },
+          "name": {
+            "type": "string"
+          },
+          "rendered": {
+            "type": ["string", "null"],
+            "description": "Blob hash for the rendered composite layer."
+          },
+          "segment": {
+            "type": ["string", "null"],
+            "description": "Blob hash for the segmentation mask layer."
+          },
+          "style": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentStyle"
+              }
+            ]
+          },
+          "textBlocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TextBlockDetail"
+            }
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "DocumentStyle": {
+        "type": "object",
+        "properties": {
+          "defaultFont": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "DocumentSummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "width",
+          "height",
+          "hasSegment",
+          "hasInpainted",
+          "hasBrushLayer",
+          "hasRendered",
+          "textBlockCount"
+        ],
+        "properties": {
+          "hasBrushLayer": {
+            "type": "boolean"
+          },
+          "hasInpainted": {
+            "type": "boolean"
+          },
+          "hasRendered": {
+            "type": "boolean"
+          },
+          "hasSegment": {
+            "type": "boolean"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "textBlockCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "DownloadState": {
+        "type": "object",
+        "required": ["id", "filename", "downloaded", "status"],
+        "properties": {
+          "downloaded": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "error": {
+            "type": ["string", "null"]
+          },
+          "filename": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TransferStatus"
+          },
+          "total": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "EngineCatalogEntry": {
+        "type": "object",
+        "required": ["id", "name", "produces"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "produces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExportBatchRequest": {
+        "type": "object",
+        "properties": {
+          "layer": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ExportLayer"
+              }
+            ]
+          }
+        }
+      },
+      "ExportLayer": {
+        "type": "string",
+        "enum": ["rendered", "inpainted"]
+      },
+      "ExportResult": {
+        "type": "object",
+        "required": ["count"],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "FontFaceInfo": {
+        "type": "object",
+        "required": ["familyName", "postScriptName", "source", "cached"],
+        "properties": {
+          "cached": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": ["string", "null"]
+          },
+          "familyName": {
+            "type": "string"
+          },
+          "postScriptName": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FontSource"
+          }
+        }
+      },
+      "FontPrediction": {
+        "type": "object",
+        "required": [
+          "top_fonts",
+          "named_fonts",
+          "direction",
+          "text_color",
+          "stroke_color",
+          "font_size_px",
+          "stroke_width_px",
+          "line_height",
+          "angle_deg"
+        ],
+        "properties": {
+          "angle_deg": {
+            "type": "number",
+            "format": "float"
+          },
+          "direction": {
+            "$ref": "#/components/schemas/TextDirection"
+          },
+          "font_size_px": {
+            "type": "number",
+            "format": "float"
+          },
+          "line_height": {
+            "type": "number",
+            "format": "float"
+          },
+          "named_fonts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NamedFontPrediction"
+            }
+          },
+          "stroke_color": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "stroke_width_px": {
+            "type": "number",
+            "format": "float"
+          },
+          "text_color": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "top_fonts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopFont"
+            }
+          }
+        }
+      },
+      "FontSource": {
+        "type": "string",
+        "enum": ["system", "google"]
+      },
+      "GoogleFontCatalogEntry": {
+        "type": "object",
+        "required": ["family", "category", "subsets", "cached"],
+        "properties": {
+          "cached": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "subsets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GoogleFontCatalogResponse": {
+        "type": "object",
+        "required": ["fonts", "recommended"],
+        "properties": {
+          "fonts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoogleFontCatalogEntry"
+            }
+          },
+          "recommended": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "HttpConfig": {
+        "type": "object",
+        "properties": {
+          "connect_timeout": {
+            "type": "integer",
+            "format": "int64",
+            "default": 20,
+            "minimum": 0
+          },
+          "max_retries": {
+            "type": "integer",
+            "format": "int32",
+            "default": 3,
+            "minimum": 0
+          },
+          "read_timeout": {
+            "type": "integer",
+            "format": "int64",
+            "default": 300,
+            "minimum": 0
+          }
+        }
+      },
+      "ImportMode": {
+        "type": "string",
+        "enum": ["replace", "append"]
+      },
+      "ImportResult": {
+        "type": "object",
+        "required": ["totalCount", "documents"],
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentSummary"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "InpaintRegionRequest": {
+        "type": "object",
+        "required": ["region"],
+        "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          }
+        }
+      },
+      "JobState": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "currentDocument",
+          "totalDocuments",
+          "currentStepIndex",
+          "totalSteps",
+          "overallPercent"
+        ],
+        "properties": {
+          "currentDocument": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStepIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "error": {
+            "type": ["string", "null"]
+          },
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "overallPercent": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "step": {
+            "type": ["string", "null"]
+          },
+          "totalDocuments": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalSteps": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "JobStatus": {
+        "type": "string",
+        "enum": ["running", "completed", "cancelled", "failed"]
+      },
+      "LlmCatalog": {
+        "type": "object",
+        "required": ["localModels", "providers"],
+        "properties": {
+          "localModels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmCatalogModel"
+            }
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmProviderCatalog"
+            }
+          }
+        }
+      },
+      "LlmCatalogModel": {
+        "type": "object",
+        "required": ["target", "name", "languages"],
+        "properties": {
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/LlmTarget"
+          }
+        }
+      },
+      "LlmGenerationOptions": {
+        "type": "object",
+        "properties": {
+          "customSystemPrompt": {
+            "type": ["string", "null"]
+          },
+          "maxTokens": {
+            "type": ["integer", "null"],
+            "format": "int32",
+            "minimum": 0
+          },
+          "temperature": {
+            "type": ["number", "null"],
+            "format": "double"
+          }
+        }
+      },
+      "LlmLoadRequest": {
+        "type": "object",
+        "required": ["target"],
+        "properties": {
+          "options": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LlmGenerationOptions"
+              }
+            ]
+          },
+          "target": {
+            "$ref": "#/components/schemas/LlmTarget"
+          }
+        }
+      },
+      "LlmProviderCatalog": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "requiresApiKey",
+          "requiresBaseUrl",
+          "hasApiKey",
+          "status",
+          "models"
+        ],
+        "properties": {
+          "baseUrl": {
+            "type": ["string", "null"]
+          },
+          "error": {
+            "type": ["string", "null"]
+          },
+          "hasApiKey": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmCatalogModel"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "requiresApiKey": {
+            "type": "boolean"
+          },
+          "requiresBaseUrl": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LlmProviderCatalogStatus"
+          }
+        }
+      },
+      "LlmProviderCatalogStatus": {
+        "type": "string",
+        "enum": ["ready", "missing_configuration", "discovery_failed"]
+      },
+      "LlmState": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "error": {
+            "type": ["string", "null"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/LlmStateStatus"
+          },
+          "target": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LlmTarget"
+              }
+            ]
+          }
+        }
+      },
+      "LlmStateStatus": {
+        "type": "string",
+        "enum": ["empty", "loading", "ready", "failed"]
+      },
+      "LlmTarget": {
+        "type": "object",
+        "required": ["kind", "modelId"],
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/LlmTargetKind"
+          },
+          "modelId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "LlmTargetKind": {
+        "type": "string",
+        "enum": ["local", "provider"]
+      },
+      "MaskRegionRequest": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "region": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Region"
+              }
+            ]
+          }
+        }
+      },
+      "MetaInfo": {
+        "type": "object",
+        "required": ["version", "mlDevice"],
+        "properties": {
+          "mlDevice": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "NamedFontPrediction": {
+        "type": "object",
+        "required": ["index", "name", "probability", "serif"],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "language": {
+            "type": ["string", "null"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "format": "float"
+          },
+          "serif": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PipelineConfig": {
+        "type": "object",
+        "description": "Engine selection for each pipeline stage.\nValues are engine IDs (e.g. \"pp-doclayout-v3\", \"comic-text-detector\").\nEmpty string means use default.",
+        "properties": {
+          "bubble_detector": {
+            "type": "string",
+            "default": "comic-text-bubble-detector"
+          },
+          "detector": {
+            "type": "string",
+            "default": "comic-text-bubble-detector"
+          },
+          "font_detector": {
+            "type": "string",
+            "default": "yuzumarker-font-detection"
+          },
+          "inpainter": {
+            "type": "string",
+            "default": "aot-inpainting"
+          },
+          "ocr": {
+            "type": "string",
+            "default": "paddle-ocr-vl-1.5"
+          },
+          "renderer": {
+            "type": "string",
+            "default": "koharu-renderer"
+          },
+          "segmenter": {
+            "type": "string",
+            "default": "comic-text-detector-seg"
+          },
+          "translator": {
+            "type": "string",
+            "default": "llm"
+          }
+        }
+      },
+      "PipelineJobRequest": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": ["string", "null"]
+          },
+          "language": {
+            "type": ["string", "null"]
+          },
+          "llm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PipelineLlmRequest"
+              }
+            ]
+          },
+          "shaderEffect": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextShaderEffect"
+              }
+            ]
+          },
+          "shaderStroke": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStrokeStyle"
+              }
+            ]
+          }
+        }
+      },
+      "PipelineLlmRequest": {
+        "type": "object",
+        "required": ["target"],
+        "properties": {
+          "options": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LlmGenerationOptions"
+              }
+            ]
+          },
+          "target": {
+            "$ref": "#/components/schemas/LlmTarget"
+          }
+        }
+      },
+      "ProviderConfig": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "api_key": {
+            "type": ["string", "null"],
+            "description": "Populated from the keyring on `load()`, never written to config.toml.\nSerializes as `\"[REDACTED]\"` in API responses.\nPopulated from keyring on `load()`. Serializes as `\"[REDACTED]\"`."
+          },
+          "base_url": {
+            "type": ["string", "null"]
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "Region": {
+        "type": "object",
+        "required": ["x", "y", "width", "height"],
+        "properties": {
+          "height": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
+      "RenderRequest": {
+        "type": "object",
+        "properties": {
+          "shaderEffect": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextShaderEffect"
+              }
+            ]
+          },
+          "shaderStroke": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStrokeStyle"
+              }
+            ]
+          },
+          "textBlockId": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "TextAlign": {
+        "type": "string",
+        "enum": ["left", "center", "right"]
+      },
+      "TextBlockDetail": {
+        "type": "object",
+        "required": ["id", "x", "y", "width", "height", "confidence"],
+        "properties": {
+          "confidence": {
+            "type": "number",
+            "format": "float"
+          },
+          "detectedFontSizePx": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "detector": {
+            "type": ["string", "null"]
+          },
+          "fontPrediction": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontPrediction"
+              }
+            ]
+          },
+          "height": {
+            "type": "number",
+            "format": "float"
+          },
+          "id": {
+            "type": "string"
+          },
+          "linePolygons": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "float"
+                }
+              }
+            }
+          },
+          "renderHeight": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "renderWidth": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "renderX": {
+            "type": ["number", "null"],
+            "format": "float",
+            "description": "Actual render area position/size (when bubble expansion is used)."
+          },
+          "renderY": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "rendered": {
+            "type": ["string", "null"],
+            "description": "Blob hash for the rendered text block sprite."
+          },
+          "renderedDirection": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextDirection"
+              }
+            ]
+          },
+          "rotationDeg": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "sourceDirection": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextDirection"
+              }
+            ]
+          },
+          "sourceLanguage": {
+            "type": ["string", "null"]
+          },
+          "style": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStyle"
+              }
+            ]
+          },
+          "text": {
+            "type": ["string", "null"]
+          },
+          "translation": {
+            "type": ["string", "null"]
+          },
+          "width": {
+            "type": "number",
+            "format": "float"
+          },
+          "x": {
+            "type": "number",
+            "format": "float"
+          },
+          "y": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "TextBlockInput": {
+        "type": "object",
+        "required": ["x", "y", "width", "height"],
+        "properties": {
+          "height": {
+            "type": "number",
+            "format": "float"
+          },
+          "id": {
+            "type": ["string", "null"]
+          },
+          "style": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStyle"
+              }
+            ]
+          },
+          "text": {
+            "type": ["string", "null"]
+          },
+          "translation": {
+            "type": ["string", "null"]
+          },
+          "width": {
+            "type": "number",
+            "format": "float"
+          },
+          "x": {
+            "type": "number",
+            "format": "float"
+          },
+          "y": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "TextBlockPatch": {
+        "type": "object",
+        "properties": {
+          "height": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "style": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStyle"
+              }
+            ]
+          },
+          "text": {
+            "type": ["string", "null"]
+          },
+          "translation": {
+            "type": ["string", "null"]
+          },
+          "width": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "x": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "y": {
+            "type": ["number", "null"],
+            "format": "float"
+          }
+        }
+      },
+      "TextDirection": {
+        "type": "string",
+        "enum": ["Horizontal", "Vertical"]
+      },
+      "TextShaderEffect": {
+        "type": "object",
+        "properties": {
+          "bold": {
+            "type": "boolean"
+          },
+          "italic": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TextStrokeStyle": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "widthPx": {
+            "type": ["number", "null"],
+            "format": "float"
+          }
+        }
+      },
+      "TextStyle": {
+        "type": "object",
+        "required": ["fontFamilies", "color"],
+        "properties": {
+          "color": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "effect": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextShaderEffect"
+              }
+            ]
+          },
+          "fontFamilies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fontSize": {
+            "type": ["number", "null"],
+            "format": "float"
+          },
+          "stroke": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextStrokeStyle"
+              }
+            ]
+          },
+          "textAlign": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextAlign"
+              }
+            ]
+          }
+        }
+      },
+      "TopFont": {
+        "type": "object",
+        "required": ["index", "score"],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "score": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "TransferStatus": {
+        "type": "string",
+        "enum": ["started", "downloading", "completed", "failed"]
+      },
+      "TranslateRequest": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": ["string", "null"]
+          },
+          "systemPrompt": {
+            "type": ["string", "null"]
+          },
+          "textBlockId": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "UpdateDocumentStyleRequest": {
+        "type": "object",
+        "properties": {
+          "defaultFont": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+[package]
+name = "koharu-app"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license.workspace = true
+authors.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+publish.workspace = true
+
+[dependencies]
+koharu-core = { workspace = true }
+koharu-ml = { workspace = true }
+koharu-renderer = { workspace = true }
+koharu-llm = { workspace = true }
+koharu-runtime = { workspace = true }
+anyhow = { workspace = true }
+inventory = { workspace = true }
+async-trait = { workspace = true }
+camino = { workspace = true }
+dirs = { workspace = true }
+image = { workspace = true }
+imageproc = { workspace = true }
+open = { workspace = true }
+rayon = { workspace = true }
+rfd = { workspace = true }
+reqwest-middleware = { workspace = true }
+secrecy = { workspace = true }
+serde = { workspace = true }
+utoipa = { workspace = true }
+strum = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true }
+toml = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true }
+blake3 = { workspace = true }
+lru = { workspace = true }
+petgraph = { workspace = true }
+petname = { workspace = true }
+serde_json = { workspace = true }
