@@ -38,6 +38,12 @@ jobs:
       - name: Install MSVC Build Tools
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "windows-binary"
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+
       - name: Install dependencies
         run: bun install
 
