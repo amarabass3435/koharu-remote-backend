@@ -1,8 +1,5 @@
-use std::str::FromStr;
-
 use anyhow::{bail, Context, Result};
-use image::DynamicImage;
-use koharu_core::{TextBlock, Document};
+use koharu_core::TextBlock;
 use reqwest::multipart;
 use serde_json::Value;
 
@@ -105,7 +102,7 @@ pub async fn run_remote_engine(id: &str, res: &AppResources, page_id: &str) -> R
         if texts.len() == doc.text_blocks.len() {
             res.storage.update_page(page_id, move |d| {
                 for (i, text) in texts.into_iter().enumerate() {
-                    d.text_blocks[i].text = text;
+                    d.text_blocks[i].text = Some(text);
                 }
             }).await?;
         } else {
@@ -158,7 +155,7 @@ pub async fn run_remote_engine(id: &str, res: &AppResources, page_id: &str) -> R
         let result_bytes = resp.bytes().await?;
         let result_img = image::load_from_memory(&result_bytes).context("failed to decode remote inpainted image")?;
         
-        let inpainted_hash = res.storage.images.save(&result_img, koharu_core::ImageFormat::WebP)?;
+        let inpainted_hash = res.storage.images.store_webp(&result_img)?;
         
         res.storage.update_page(page_id, move |d| {
             d.inpainted = Some(inpainted_hash);
